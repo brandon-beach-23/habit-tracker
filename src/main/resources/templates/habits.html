@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Habits</title>
+</head>
+
+<body>
+<h1>Habits</h1>
+
+<a th:href="@{/habits/new}">Create New Habit</a>
+<ul>
+    <li th:each="habit : ${habits}">
+        <span th:text="${habit.name}"></span>
+        <form th:action="@{/habits/{id}/deactivate(id=${habit.id})}" method="post">
+            <button type="submit">Deactivate</button>
+        </form>
+    </li>
+</ul>
+</body>
+</html>

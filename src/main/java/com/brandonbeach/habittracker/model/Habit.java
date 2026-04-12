@@ -30,13 +30,12 @@ public class Habit {
     @Column(nullable = false)
     private boolean active = true;
 
-    protected Habit() {}
+    public Habit() {}
 
     public Habit(String name, String description, HabitFrequency frequency, LocalDate createdDate) {
         this.name = name;
         this.description = description;
         this.frequency = frequency;
-        this.createdDate = createdDate;
     }
 
     public Long getId() {
@@ -81,5 +80,10 @@ public class Habit {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdDate = LocalDate.now();
     }
 }

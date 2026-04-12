@@ -1,4 +1,12 @@
 package com.brandonbeach.habittracker.repository;
 
-public class HabitRepository {
+import com.brandonbeach.habittracker.model.Habit;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface HabitRepository extends JpaRepository<Habit, Long> {
+
+    // Returns all active habits
+    List<Habit> findByActiveTrue();
 }
