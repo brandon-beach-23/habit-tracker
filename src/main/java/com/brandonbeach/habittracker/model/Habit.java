@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import com.brandonbeach.habittracker.model.HabitCompletion;
 
 @Entity
 @Table(name = "habits")
@@ -29,6 +32,9 @@ public class Habit {
 
     @Column(nullable = false)
     private boolean active = true;
+
+    @OneToMany(mappedBy = "habit", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HabitCompletion> habitCompletions =  new ArrayList<>();
 
     public Habit() {}
 

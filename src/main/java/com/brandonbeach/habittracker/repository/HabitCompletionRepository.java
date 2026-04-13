@@ -1,4 +1,15 @@
 package com.brandonbeach.habittracker.repository;
 
-public interface HabitCompletionRepository {
+import com.brandonbeach.habittracker.model.Habit;
+import com.brandonbeach.habittracker.model.HabitCompletion;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+public interface HabitCompletionRepository extends JpaRepository<HabitCompletion, Long> {
+
+    Optional<HabitCompletion> findByHabitAndCompletionDate(Habit habit, LocalDate completionDate);
+    List<HabitCompletion> findByHabitOrderByCompletionDate(Habit habit);
 }
