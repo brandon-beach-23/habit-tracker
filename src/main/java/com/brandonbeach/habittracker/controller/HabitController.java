@@ -9,6 +9,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 
 @Controller
 @RequestMapping("/habits")
@@ -24,7 +28,14 @@ public class HabitController {
 
     @GetMapping
     public String habits(Model model) {
-        model.addAttribute("habits", habitService.getAllActiveHabits());
+        List<Habit> habits = habitService.getAllActiveHabits();
+
+        Map<Long, Integer> streaks = new LinkedHashMap<>();
+        for (Habit habit : habits) {
+            streaks.put(habit.getId(), habitCompletionService.calculateStreak(habit.getId()));
+        }
+        model.addAttribute("habits", habits);
+        model.addAttribute("streaks", streaks);
         return "habits";
     }
 

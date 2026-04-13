@@ -11,6 +11,10 @@
 <ul>
     <li th:each="habit : ${habits}">
         <span th:text="${habit.name}"></span>
+        <span th:text="'Streak: ' + ${streaks[habit.id]}"></span>
+        <form th:action="@{/habits/{id}/complete(id=${habit.id})}" method="post">
+            <button type="submit">Mark Complete</button>
+        </form>
         <form th:action="@{/habits/{id}/deactivate(id=${habit.id})}" method="post">
             <button type="submit">Deactivate</button>
         </form>
