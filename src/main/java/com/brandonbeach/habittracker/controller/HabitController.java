@@ -5,8 +5,10 @@ import com.brandonbeach.habittracker.model.Habit;
 import com.brandonbeach.habittracker.model.HabitFrequency;
 import com.brandonbeach.habittracker.service.HabitCompletionService;
 import com.brandonbeach.habittracker.service.HabitService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
@@ -47,9 +49,13 @@ public class HabitController {
     }
 
     @PostMapping
-    public String createHabit(@ModelAttribute Habit habit) {
-    habitService.createHabit(habit);
-    return "redirect:/habits";
+    public String createHabit(@Valid @ModelAttribute Habit habit, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("frequencies", HabitFrequency.values());
+            return "createHabit";
+        }
+        habitService.createHabit(habit);
+        return "redirect:/habits";
     }
 
     @PostMapping("/{id}/deactivate")

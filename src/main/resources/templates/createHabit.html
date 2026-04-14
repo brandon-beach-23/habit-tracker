@@ -11,9 +11,15 @@
 <form th:action="@{/habits}" th:object="${habit}" method="post">
     <label>Name:</label>
     <input type="text" th:field="*{name}" required />
+    <span th:if="${#fields.hasErrors('name')}"
+          th:errors="*{name}">
+    </span>
 
     <label>Description:</label>
     <input type="text" th:field="*{description}" required />
+    <span th:if="${#fields.hasErrors('description')}"
+          th:errors="*{description}">
+    </span>
 
     <label>Frequency:</label>
     <select th:field="*{frequency}">
@@ -22,6 +28,9 @@
                 th:text="${freq}">
         </option>
     </select>
+    <span th:if="${#fields.hasErrors('frequency')}"
+          th:errors="*{frequency}">
+    </span>
 
     <button type="submit">Save</button>
 </form>

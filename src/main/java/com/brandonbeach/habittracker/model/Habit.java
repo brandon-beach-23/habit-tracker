@@ -6,7 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import com.brandonbeach.habittracker.model.HabitCompletion;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "habits")
@@ -16,13 +18,15 @@ public class Habit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Name is required")
     @Column(nullable = false)
     private String name;
 
+    @Size(max = 500, message = "Description cannot exceed 500 characters")
     @Column(length = 500)
     private String description;
 
+    @NotNull(message = "Frequency is required")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private HabitFrequency frequency;
@@ -39,12 +43,6 @@ public class Habit {
     public Habit() {}
 
     public Habit(String name, String description, HabitFrequency frequency) {
-        this.name = name;
-        this.description = description;
-        this.frequency = frequency;
-    }
-
-    public Habit(String name, String description, HabitFrequency frequency, LocalDate createdDate) {
         this.name = name;
         this.description = description;
         this.frequency = frequency;
