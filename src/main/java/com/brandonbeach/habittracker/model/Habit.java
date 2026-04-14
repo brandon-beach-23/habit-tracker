@@ -38,6 +38,12 @@ public class Habit {
 
     public Habit() {}
 
+    public Habit(String name, String description, HabitFrequency frequency) {
+        this.name = name;
+        this.description = description;
+        this.frequency = frequency;
+    }
+
     public Habit(String name, String description, HabitFrequency frequency, LocalDate createdDate) {
         this.name = name;
         this.description = description;
@@ -90,6 +96,8 @@ public class Habit {
 
     @PrePersist
     protected void onCreate() {
-        this.createdDate = LocalDate.now();
+        if (createdDate == null) {
+            this.createdDate = LocalDate.now();
+        }
     }
 }
