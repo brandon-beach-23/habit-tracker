@@ -32,9 +32,10 @@ public class HabitControllerTest {
     @Test
     public void getHabits_returnsHabitsView() throws Exception {
         Habit habit = new Habit("Coding", "Coding Practice", HabitFrequency.DAILY);
+        habit.setId(1L);
 
         when(habitService.getAllActiveHabits()).thenReturn(List.of(habit));
-        when(habitCompletionService.calculateStreak(any())).thenReturn(1);
+        when(habitCompletionService.calculateStreak(any())).thenReturn(0);
 
         mockMvc.perform(get("/habits"))
                 .andExpect(status().isOk())
