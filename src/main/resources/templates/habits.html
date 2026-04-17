@@ -1,24 +1,293 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Habits</title>
+    <title>Habit Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg:        #0e0f11;
+            --surface:   #16181c;
+            --border:    #2a2d35;
+            --text:      #e8e9ec;
+            --muted:     #6b7280;
+            --accent:    #4ade80;
+            --accent-dim:#1a3a27;
+            --danger:    #f87171;
+            --danger-dim:#3a1a1a;
+            --radius:    10px;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Mono', monospace;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        /* ── Header ── */
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 28px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 10;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        /* ── Main layout ── */
+        main {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 56px 32px;
+        }
+
+        .page-heading {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .page-subheading {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-bottom: 40px;
+        }
+
+        /* ── Add habit button ── */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: #0a1a10;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            transition: opacity 0.15s, transform 0.15s;
+            margin-bottom: 40px;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary::before {
+            content: '+';
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        /* ── Habit list ── */
+        .habit-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            list-style: none;
+        }
+
+        /* ── Habit card ── */
+        .habit-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 16px;
+            transition: border-color 0.2s, transform 0.2s;
+            animation: slideIn 0.3s ease both;
+        }
+
+        .habit-card:hover {
+            border-color: #3d4250;
+            transform: translateY(-1px);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .habit-card:nth-child(1) { animation-delay: 0.05s; }
+        .habit-card:nth-child(2) { animation-delay: 0.10s; }
+        .habit-card:nth-child(3) { animation-delay: 0.15s; }
+        .habit-card:nth-child(4) { animation-delay: 0.20s; }
+        .habit-card:nth-child(5) { animation-delay: 0.25s; }
+
+        .habit-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .habit-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        /* ── Streak badge ── */
+        .streak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .streak-badge.active {
+            color: var(--accent);
+        }
+
+        .streak-badge::before {
+            content: '▲';
+            font-size: 0.6rem;
+        }
+
+        .streak-badge.active::before {
+            content: '🔥';
+            font-size: 0.75rem;
+        }
+
+        /* ── Action buttons ── */
+        .habit-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-complete,
+        .btn-deactivate {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            cursor: pointer;
+            transition: opacity 0.15s, transform 0.15s;
+        }
+
+        .btn-complete {
+            background: var(--accent-dim);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .btn-complete:hover {
+            background: var(--accent);
+            color: #0a1a10;
+            transform: translateY(-1px);
+        }
+
+        .btn-deactivate {
+            background: var(--danger-dim);
+            color: var(--danger);
+            border: 1px solid transparent;
+        }
+
+        .btn-deactivate:hover {
+            border-color: var(--danger);
+            transform: translateY(-1px);
+        }
+
+        /* ── Empty state ── */
+        .empty-state {
+            text-align: center;
+            padding: 80px 24px;
+            color: var(--muted);
+        }
+
+        .empty-state p {
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 32px;
+            color: var(--muted);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--border);
+            margin-top: 80px;
+        }
+    </style>
 </head>
-
 <body>
-<h1>Habits</h1>
 
-<a th:href="@{/habits/new}">Create New Habit</a>
-<ul>
-    <li th:each="habit : ${habits}">
-        <span th:text="${habit.name}"></span>
-        <span th:text="'Streak: ' + ${streaks[habit.id]}"></span>
-        <form th:action="@{/habits/{id}/complete(id=${habit.id})}" method="post">
-            <button type="submit">Mark Complete</button>
-        </form>
-        <form th:action="@{/habits/{id}/deactivate(id=${habit.id})}" method="post">
-            <button type="submit">Deactivate</button>
-        </form>
-    </li>
-</ul>
+<header>
+    <div class="logo">habit<span>.</span>track</div>
+</header>
+
+<main>
+    <h1 class="page-heading">Your Habits</h1>
+    <p class="page-subheading">Stay consistent. Every day counts.</p>
+
+    <a th:href="@{/habits/new}" class="btn-primary">New Habit</a>
+
+    <ul class="habit-list" th:if="${not #lists.isEmpty(habits)}">
+        <li class="habit-card" th:each="habit : ${habits}">
+            <div class="habit-left">
+                <span class="habit-name" th:text="${habit.name}"></span>
+                <span class="streak-badge"
+                      th:classappend="${streaks[habit.id] > 0} ? 'active' : ''"
+                      th:text="${streaks[habit.id]} + ' day streak'">
+                </span>
+            </div>
+            <div class="habit-actions">
+                <form th:action="@{/habits/{id}/complete(id=${habit.id})}" method="post">
+                    <button type="submit" class="btn-complete">Mark Done</button>
+                </form>
+                <form th:action="@{/habits/{id}/deactivate(id=${habit.id})}" method="post">
+                    <button type="submit" class="btn-deactivate">Deactivate</button>
+                </form>
+            </div>
+        </li>
+    </ul>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(habits)}">
+        <p>No active habits yet. Start building your routine.</p>
+        <a th:href="@{/habits/new}" class="btn-primary">Add Your First Habit</a>
+    </div>
+</main>
+
+<footer>
+    built to keep you consistent
+</footer>
+
 </body>
 </html>
