@@ -6,10 +6,12 @@ import com.brandonbeach.habittracker.model.HabitFrequency;
 import com.brandonbeach.habittracker.repository.HabitCompletionRepository;
 import com.brandonbeach.habittracker.repository.HabitRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
+@Profile("dev")
 @Component
 public class DataInitializer implements CommandLineRunner {
 
